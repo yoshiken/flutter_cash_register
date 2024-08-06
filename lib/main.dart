@@ -114,9 +114,12 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _allRemoveCart,
-        tooltip: 'カートを空に',
-        child: const Icon(Icons.delete_sweep),
+        onPressed: () {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => NextPage()));
+        },
+        tooltip: 'お会計',
+        child: const Icon(Icons.shopping_cart),
       ),
     );
   }
