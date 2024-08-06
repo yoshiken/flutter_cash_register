@@ -116,7 +116,10 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
-              context, MaterialPageRoute(builder: (context) => NextPage()));
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      NextPage(getAllCartPrice().toString())));
         },
         tooltip: 'お会計',
         child: const Icon(Icons.shopping_cart),
@@ -207,6 +210,35 @@ class _MyHomePageState extends State<MyHomePage> {
               style:
                   const TextStyle(fontWeight: FontWeight.w900, fontSize: 64)),
         ],
+      ),
+    );
+  }
+}
+
+class NextPage extends StatelessWidget {
+  late String price;
+
+  NextPage(this.price, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('計算ページ'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text("合計金額: $price"),
+            ElevatedButton(
+              child: const Text("前の画面に戻る"),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
