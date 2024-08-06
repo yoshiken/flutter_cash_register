@@ -1,4 +1,7 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
+import 'package:onscreen_num_keyboard/onscreen_num_keyboard.dart';
 
 void main() {
   runApp(const MyApp());
@@ -215,10 +218,30 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-class NextPage extends StatelessWidget {
-  late String price;
+class NextPage extends StatefulWidget {
+  final String price;
 
-  NextPage(this.price, {super.key});
+  const NextPage(this.price, {super.key});
+
+  @override
+  _NextPageState createState() => _NextPageState();
+}
+
+class _NextPageState extends State<NextPage> {
+  late int price = int.parse(widget.price);
+  var inputNumber = "";
+  var str = "";
+  var change = 0;
+
+  int depositAmount = 0;
+
+  void _onKeyboardTap(String value) {
+    setState(() {
+      str = depositAmount.toString() + value;
+      depositAmount = int.parse(str);
+      change = depositAmount - price;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -230,9 +253,40 @@ class NextPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text("合計金額: $price"),
+            Text("合計金額: $price",
+                style:
+                    const TextStyle(fontWeight: FontWeight.w900, fontSize: 32)),
+            Text("お預かり金額: $depositAmount",
+                style:
+                    const TextStyle(fontWeight: FontWeight.w900, fontSize: 32)),
+            Text("おつり: $change",
+                style:
+                    const TextStyle(fontWeight: FontWeight.w900, fontSize: 32)),
+            NumericKeyboard(
+              onKeyboardTap: _onKeyboardTap,
+              rightButtonFn: () {
+                if (depositAmount == 0) return;
+                if (depositAmount.toString().length == 1) {
+                  setState(() {
+                    depositAmount = 0;
+                    change = depositAmount - price;
+                  });
+                  return;
+                }
+                setState(() {
+                  str = depositAmount.toString();
+                  depositAmount =
+                      int.parse(str.toString().substring(0, str.length - 1));
+                  change = depositAmount - price;
+                });
+              },
+              rightIcon: const Icon(
+                Icons.backspace,
+                color: Colors.red,
+              ),
+            ),
             ElevatedButton(
-              child: const Text("前の画面に戻る"),
+              child: const Text("購入！"),
               onPressed: () {
                 Navigator.pop(context);
               },
