@@ -59,48 +59,21 @@ class _MyHomePageState extends State<MyHomePage> {
     return totalPrice;
   }
 
-  List productList = [
-    {
-      "name": "example1",
-      "price": 100,
-    },
-    {
-      "name": "example2",
-      "price": 200,
-    },
-    {
-      "name": "example3",
-      "price": 300,
-    },
-    {
-      "name": "example4",
-      "price": 400,
-    },
-    {
-      "name": "example5",
-      "price": 500,
-    },
-    {
-      "name": "example6",
-      "price": 600,
-    },
-    {
-      "name": "example7",
-      "price": 700,
-    },
-    {
-      "name": "example8",
-      "price": 800,
-    },
-    {
-      "name": "example9",
-      "price": 900,
-    },
-    {
-      "name": "example10",
-      "price": 1000,
-    }
-  ];
+  Map<String, List<Map<String, dynamic>>> productListMap = {
+    "product": [
+      {"name": "example1", "price": 100},
+      {"name": "example2", "price": 200},
+      {"name": "example3", "price": 300},
+      {"name": "example4", "price": 400},
+      {"name": "example5", "price": 500},
+      {"name": "example6", "price": 600},
+      {"name": "example7", "price": 700},
+      {"name": "example8", "price": 800},
+      {"name": "example9", "price": 900},
+      {"name": "example10", "price": 1000},
+      {"name": "example11", "price": 0},
+    ]
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -109,7 +82,7 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            _productList(productList, context),
+            _productList(productListMap, context),
             _price(context),
           ],
         ),
@@ -128,7 +101,13 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Widget _productList(List productList, BuildContext context) {
+  Widget _productList(Map<String, List<Map<String, dynamic>>> productMap,
+      BuildContext context) {
+    List<Map<String, dynamic>>? tmp = productMap["product"];
+    if (tmp == null) {
+      return const Text("No Data");
+    }
+    List<Map<String, dynamic>> productList = tmp;
     return LimitedBox(
       maxHeight: MediaQuery.of(context).size.height * 0.65,
       child: ListView.builder(
