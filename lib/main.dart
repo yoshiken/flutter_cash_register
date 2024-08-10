@@ -1,8 +1,39 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:onscreen_num_keyboard/onscreen_num_keyboard.dart';
+import 'package:path_provider/path_provider.dart';
 
 void main() {
   runApp(const MyApp());
+}
+
+Future<String> get _localPath async {
+  final directory = await getApplicationDocumentsDirectory();
+
+  return '${directory.path}/cash_register';
+}
+
+Future<File> _localFile(String fileName) async {
+  final path = await _localPath;
+  final directory = Directory(path);
+  await directory.create(recursive: true);
+  debugPrint('saved $path/$fileName.txt');
+  return File('$path/$fileName.txt');
+}
+
+Future<File> writeCounter(List<Map> cartProducts, String fileName) async {
+  DateTime nowtime = DateTime.now();
+  final file = await _localFile(nowtime.millisecondsSinceEpoch.toString());
+
+  // return file.writeAsString(cartProducts.toString());
+
+  for (var element in cartProducts) {
+    file.writeAsStringSync('${element["name"]},${element["price"]}\n',
+        mode: FileMode.append);
+  }
+
+  return file;
 }
 
 class MyApp extends StatelessWidget {
@@ -93,7 +124,7 @@ class _MyHomePageState extends State<MyHomePage> {
               context,
               MaterialPageRoute(
                   builder: (context) =>
-                      NextPage(getAllCartPrice().toString())));
+                      NextPage(getAllCartPrice().toString(), _cartProducts)));
         },
         tooltip: 'お会計',
         child: const Icon(Icons.shopping_cart),
@@ -197,8 +228,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
 class NextPage extends StatefulWidget {
   final String price;
+  final List<Map> cartProducts;
 
-  const NextPage(this.price, {super.key});
+  const NextPage(this.price, this.cartProducts, {super.key});
 
   @override
   _NextPageState createState() => _NextPageState();
@@ -206,6 +238,7 @@ class NextPage extends StatefulWidget {
 
 class _NextPageState extends State<NextPage> {
   late int price = int.parse(widget.price);
+  late List<Map> cartProducts = widget.cartProducts;
   var inputNumber = "";
   var str = "";
   var change = 0;
@@ -265,6 +298,7 @@ class _NextPageState extends State<NextPage> {
             ElevatedButton(
               child: const Text("購入！"),
               onPressed: () {
+                writeCounter(cartProducts, "cart.txt");
                 Navigator.pop(context);
               },
             ),
